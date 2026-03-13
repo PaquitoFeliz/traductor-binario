@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Traductor Binario Pro</title>
+
+<style>
+
+body{
+margin:0;
+background:black;
+color:#00ff00;
+font-family:monospace;
+text-align:center;
+overflow:hidden;
+}
+
+canvas{
+position:fixed;
+top:0;
+left:0;
+z-index:-1;
+}
+
+.container{
+padding:40px;
+}
+
+textarea{
+width:90%;
+height:120px;
+background:black;
+color:#00ff00;
+border:1px solid #00ff00;
+padding:10px;
+margin:10px;
+font-size:16px;
+}
+
+button{
+background:black;
+color:#00ff00;
+border:1px solid #00ff00;
+padding:10px 20px;
+margin:10px;
+cursor:pointer;
+}
+
+button:hover{
+background:#00ff00;
+color:black;
+}
+
+</style>
+</head>
+
+<body>
+
+<canvas id="matrix"></canvas>
+
+<div class="container">
+
+<h1>TRADUCTOR TEXTO ↔ BINARIO</h1>
+
+<p>Texto</p>
+<textarea id="texto" oninput="textoABinario()"></textarea>
+
+<p>Binario</p>
+<textarea id="binario" oninput="binarioATexto()"></textarea>
+
+<br>
+
+<button onclick="copiarBinario()">Copiar Binario</button>
+<button onclick="copiarTexto()">Copiar Texto</button>
+
+</div>
+
+<script>
+
+// TRADUCTOR
+
+function textoABinario(){
+let texto=document.getElementById("texto").value;
+let resultado="";
+
+for(let i=0;i<texto.length;i++){
+resultado+=texto[i].charCodeAt(0).toString(2).padStart(8,"0")+" ";
+}
+
+document.getElementById("binario").value=resultado.trim();
+}
+
+function binarioATexto(){
+let binario=document.getElementById("binario").value.split(" ");
+let resultado="";
+
+binario.forEach(b=>{
+if(b){
+resultado+=String.fromCharCode(parseInt(b,2));
+}
+});
+
+document.getElementById("texto").value=resultado;
+}
+
+// COPIAR
+
+function copiarBinario(){
+let texto=document.getElementById("binario");
+texto.select();
+document.execCommand("copy");
+}
+
+function copiarTexto(){
+let texto=document.getElementById("texto");
+texto.select();
+document.execCommand("copy");
+}
+
+// EFECTO MATRIX
+
+let canvas=document.getElementById("matrix");
+let ctx=canvas.getContext("2d");
+
+canvas.height=window.innerHeight;
+canvas.width=window.innerWidth;
+
+let letras="01";
+letras=letras.split("");
+
+let fontSize=14;
+let columnas=canvas.width/fontSize;
+
+let drops=[];
+
+for(let x=0;x<columnas;x++)
+drops[x]=1;
+
+function draw(){
+
+ctx.fillStyle="rgba(0,0,0,0.05)";
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+ctx.fillStyle="#0f0";
+ctx.font=fontSize+"px monospace";
+
+for(let i=0;i<drops.length;i++){
+
+let text=letras[Math.floor(Math.random()*letras.length)];
+
+ctx.fillText(text,i*fontSize,drops[i]*fontSize);
+
+if(drops[i]*fontSize>canvas.height && Math.random()>0.975)
+drops[i]=0;
+
+drops[i]++;
+
+}
+
+}
+
+setInterval(draw,33);
+
+</script>
+
+</body>
+</html>
